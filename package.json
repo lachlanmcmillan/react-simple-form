@@ -1,0 +1,25 @@
+{
+  "name": "react-simple-form",
+  "author": {
+    "name": "Lachlan McMillan",
+    "url": "https://github.com/lachlanmcmillan"
+  },
+  "license": "MIT",
+  "version": "1.0.0",
+  "description": "library for working with forms in react",
+  "keywords": [
+    "react",
+    "hooks",
+    "form"
+  ],
+  "private": false,
+  "main": "src/useSimpleForm.js",
+  "peerDependencies": {
+    "react": "^16.8.0"
+  },
+  "devDependencies": {
+    "react": "^16.8.0"
+  },
+  "scripts": {
+  }
+}
