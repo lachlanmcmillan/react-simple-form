@@ -1,70 +1,104 @@
 import React from 'react';
 
-export const useForm = () => {
+/**
+ * @return {{
+ *   onSubmit: () => void, 
+ *   register: () => void,
+ *   inputs: { [name: string]: string) }
+ *   errors: { [name: string]: string) },
+ *   touched: { [name: string]: string) }
+ * }}
+ */
+ const useSimpleForm = () => {
   let validators = {};
   const [inputs, setInputs] = React.useState({});
   const [errors, setErrors] = React.useState({});
+  const [touched, setTouched] = React.useState({});
 
-  const handleSubmit = (callback) => {
+  /** Helper functions **/ 
+  const setInput = (name, value) => setInputs({ ...inputs, [name]: value }); 
+  const setTouch = (name) => setTouched({ ...touched, [name]: true }); 
+  const setError = (name, message) => setErrors({ ...errors, [name]: message });
+  const deleteError = (name) => {
+    const newErrors = { ...errors };
+    delete newErrors[name];
+    setErrors(newErrors);
+  }
+  /** End **/
+
+  const onSubmit = (callback) => {
     return (evt) => {
       const form = evt.target;
       evt.preventDefault();
 
-      let newErrors = {...errors}
-      // check required
+      let newErrors = { ...errors }
+      // validate all
       Object.entries(validators).forEach(([name, validator]) => {
-        const isRequired = form[name].required;
-        if (!(name in inputs && typeof inputs[name] !== 'undefined')) { 
-          // input is untouched
-          if (isRequired) {
-            newErrors[name] = 'required'
+        if (!(name in touched)) { 
+          const value = inputs[name]; // defaultValue or undefined
+
+          const result = validate(name, value);
+          // we push to newErrors manually here, because the React.setState
+          // call in validate will not have evaluated yet 
+          if (result) {
+            newErrors[name] = result;
           }
         } 
       });
 
-      setErrors(newErrors);
-
-      const hasError = Object.entries(newErrors).reduce((prev, [name, val]) => {
-        if (typeof val == 'string') return true;
-        else return prev;
-      }, false)
-      
-      if (!hasError) callback(inputs)
-    }
-  }
-
-  // @param validateFn any string value is invalid 
-  const register = (name, validateFn=(e) => true) => {
-    validators = {
-      ...validators,
-      [name]: validateFn
-    };
-
-    // handleChange
-    return (evt) => {
-      const value = evt.target.value;
-      // what about if the user sets the value to empty stirng?
-      if (value.trim() !== '') {
-        setInputs({
-          ...inputs,
-          [name]: value
-        });
-
-        const result = validateFn(value)
-        setErrors({
-          ...errors,
-          [name]: result
-        })
-      } else {
-        setInputs({
-          ...inputs,
-          [name]: undefined
-        })
+      const hasError = Object.keys(newErrors).length > 0;     
+      if (!hasError) {
+        callback(inputs)
       }
     }
   }
 
-  return { handleSubmit, register, errors, inputs };
+  const validate = (name, value) =>  {
+    const validator = validators[name];
+
+    if (validator) {
+      const result = validator(value)
+      if (typeof result !== 'string') { // we're only interested in string error messages
+        deleteError(name);
+        return undefined; // return result for the onSubmit function
+      } else {
+        setError(name, result);
+        return result; // return result for the onSubmit function
+      }
+    }
+  }
+
+  const onBlur = evt => {
+    const { name, value } = evt.target;
+    setTouch(name);
+    validate(name, value);
+  }
+
+  const onChange = evt => {
+    const { name, value } = evt.target;
+    setInput(name, value);
+    if (touched[name]) {
+      validate(name, value);
+    }
+  }
+
+  /**
+   * @param {{
+   *  name: string,
+   *  defaultValue: string  
+   *  validator?: (value: string) => string | undefined,
+   * }} params
+   */
+  const register = ({ name, validator, defaultValue }) => {
+    validators = { ...validators, [name]: validator };
+    if (!(name in inputs) && typeof defaultValue !== 'undefined') { 
+      setInput(name, defaultValue); 
+    } 
+
+    return { onBlur, onChange, name, value: inputs[name] };
+  }
+
+  return { onSubmit, register, inputs, errors, touched };
 }
 
-export default useForm;
+export default useSimpleForm;
