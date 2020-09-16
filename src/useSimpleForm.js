@@ -28,7 +28,6 @@ import React from 'react';
 
   const onSubmit = (callback) => {
     return (evt) => {
-      const form = evt.target;
       evt.preventDefault();
 
       let newErrors = { ...errors }
