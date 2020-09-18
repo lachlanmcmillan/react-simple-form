@@ -16,14 +16,14 @@ import React from 'react';
   const [touched, setTouched] = React.useState({});
 
   /** Helper functions **/ 
-  const setInput = (name, value) => setInputs({ ...inputs, [name]: value }); 
-  const setTouch = (name) => setTouched({ ...touched, [name]: true }); 
-  const setError = (name, message) => setErrors({ ...errors, [name]: message });
-  const deleteError = (name) => {
-    const newErrors = { ...errors };
+  const setInput = (name, value) => setInputs(i => ({ ...i, [name]: value })); 
+  const setTouch = (name) => setTouched(t => ({ ...t, [name]: true })); 
+  const setError = (name, message) => setErrors(e => ({ ...e, [name]: message }));
+  const deleteError = (name) => setErrors(e => {
+    const newErrors = { ...e };
     delete newErrors[name];
-    setErrors(newErrors);
-  }
+    return newErrors
+  })
   /** End **/
 
   const onSubmit = (callback) => {
