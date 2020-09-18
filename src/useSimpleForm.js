@@ -48,9 +48,7 @@ import React from 'react';
       });
 
       const hasError = Object.keys(newErrors).length > 0;     
-      if (!hasError) {
-        callback(inputs)
-      }
+      callback({ inputs, errors, hasError })
     }
   }
 
