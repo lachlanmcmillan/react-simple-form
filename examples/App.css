@@ -1,0 +1,58 @@
+.App {
+  padding: 50px;
+}
+
+.App h1 {
+  font-size: 32px;
+  text-align: center;
+  margin-top: 10px;
+  color: black;
+}
+
+.App form {
+  padding: 14px;
+  max-width: 300px;
+  background: #FAFAFA;
+  border: 1px solid black;
+  border-radius: 4px;
+}
+
+.button-group {
+  text-align: right;
+}
+
+button {
+  background: black;
+  border-color: black;
+}
+
+.button-secondary {
+  background-color: transparent;
+  color: black;
+  margin-right: 10px;
+}
+
+.form-control {
+  /* margin-bottom: 20px; */
+  height: 100px;
+}
+
+.form-control label {
+  color: black;
+}
+
+.form-control input {
+  width: 100%;
+  border-color: black;
+  background-color: white;
+  margin-bottom: 1px;
+}
+
+.form-control .input-error {
+  border: 1px solid lightcoral;
+}
+
+.form-control p {
+  font-size: 14px;
+  color: lightcoral;
+}

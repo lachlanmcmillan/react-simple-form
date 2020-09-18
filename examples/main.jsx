@@ -1,44 +1,83 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
 import useSimpleForm from '../src/useSimpleForm';
+import css from './App.css';
 
 function App() {
-  const { onSubmit, register, inputs, errors, touched } = useSimpleForm();
-  const [count, setCount] = useState(0)
+  const { onSubmit, reset, register, inputs, errors, touched } = useSimpleForm();
+
+  const handleSubmit = onSubmit(response => {
+    if (!response.hasError) {
+      console.log("onSubmit SUCCESS: ", response);
+    } else {
+      console.log("onSubmit FAIL: ", response);
+    }
+  });
 
   return (
     <div className="App">
-      <form noValidate onSubmit={onSubmit(console.log)} style={styles.form}>
-        <div style={{ marginBottom: 20 }}>
-          <label htmlFor="input-email">Email</label>
+      <form noValidate onSubmit={handleSubmit}>
+        <h1>Example Form</h1>
+
+        <div className="form-control">
+          <label htmlFor="input-email">Email - required</label>
           <input
             {...register({
               name: "email",
-              defaultValue: ""
+              defaultValue: "",
+              validator: val => 
+                typeof val !== 'string' || val.length <= 0
+                ? "Email is required"
+                : !(/\w+@\w+\.\w+/.test(val))
+                ? "Email is invalid"
+                : undefined
             })}
             id="input-email"
+            type="text"
+            className={errors.email && 'input-error'}
           />
+          <p>{errors.email}</p>
         </div>
 
-        <button type="submit">Submit</button>
+        <div className="form-control">
+          <label htmlFor="posint">Age</label>
+          <input
+            {...register({
+              name: "posint",
+              defaultValue: "18",
+              validator: val =>
+                typeof val !== 'string' || val.length <= 0
+                ? undefined
+                : isNaN(Number(val))
+                ? "Please enter a real number" 
+                : Number(val) < 18
+                ? "You must be older than 18 to Submit this form"
+                : undefined
+            })}
+            id="input-email"
+            type="text"
+            className={errors.posint && 'input-error'}
+          />
+          <p>{errors.posint}</p>
+        </div>
+
+        <div className="button-group">
+          <button type="button" onClick={() => reset()}className="button-secondary">Clear</button>
+          <button type="submit">Submit</button>
+        </div>
       </form>
 
       <h5>useSimpleForm data</h5>
-      <pre>inputs: {JSON.stringify(inputs, null, 2)} </pre>
+      <pre>
+        <code>
+          {JSON.stringify({ inputs, errors, touched }, null, 2)} 
+        </code>
+      </pre>
 
     </div>
   )
 }
 
-const styles = {
-  form: {
-    margin: 50,
-    padding: 20,
-    maxWidth: 300,
-    background: '#FAFAFA',
-    border: '2px solid #AAA'
-  }
-}
 
 ReactDOM.render(
   <React.StrictMode>
