@@ -12,11 +12,13 @@ import React from 'react';
  const useSimpleForm = () => {
   let validators = {};
   const [inputs, setInputs] = React.useState({});
+  const [defaults, setDefaults] = React.useState({});
   const [errors, setErrors] = React.useState({});
   const [touched, setTouched] = React.useState({});
 
   /** Helper functions **/ 
   const setInput = (name, value) => setInputs(i => ({ ...i, [name]: value })); 
+  const setDefault = (name, value) => setDefaults(d => ({ ...d, [name]: value })); 
   const setTouch = (name) => setTouched(t => ({ ...t, [name]: true })); 
   const setError = (name, message) => setErrors(e => ({ ...e, [name]: message }));
   const deleteError = (name) => setErrors(e => {
@@ -50,6 +52,12 @@ import React from 'react';
         callback(inputs)
       }
     }
+  }
+
+  const reset = () => {
+    setInputs({ ...defaults });
+    setTouched({});
+    setErrors({});
   }
 
   const validate = (name, value) =>  {
@@ -91,13 +99,14 @@ import React from 'react';
   const register = ({ name, validator, defaultValue }) => {
     validators = { ...validators, [name]: validator };
     if (!(name in inputs) && typeof defaultValue !== 'undefined') { 
+      setDefault(name, defaultValue);
       setInput(name, defaultValue); 
     } 
 
     return { onBlur, onChange, name, value: inputs[name] };
   }
 
-  return { onSubmit, register, inputs, errors, touched };
+  return { onSubmit, reset, register, inputs, errors, touched };
 }
 
 export default useSimpleForm;
