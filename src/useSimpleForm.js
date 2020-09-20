@@ -35,7 +35,9 @@ const useSimpleForm = () => {
 
   const onSubmit = (callback) => {
     return (evt) => {
-      evt.preventDefault();
+      if (evt) {
+        evt.preventDefault();
+      }
 
       let newErrors = { ...errors }
       // validate all
