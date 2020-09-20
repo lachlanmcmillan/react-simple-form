@@ -44,14 +44,14 @@ function App() {
           <input
             {...register({
               name: "posint",
-              defaultValue: "18",
+              defaultValue: "17",
               validator: val =>
                 typeof val !== 'string' || val.length <= 0
                 ? undefined
                 : isNaN(Number(val))
                 ? "Please enter a real number" 
                 : Number(val) < 18
-                ? "You must be older than 18 to Submit this form"
+                ? "You must be older than 18"
                 : undefined
             })}
             id="input-email"
@@ -69,12 +69,11 @@ function App() {
               validator: val =>
                 val === true
                 ? undefined
-                : "You must accept the terms and conditions to proceed"
+                : "Accept the terms and conditions to proceed"
             })}
             id="input-enabled"
             type="checkbox"
             checked={inputs.enabled === true}
-            // className={errors.posint && 'input-error'}
           />
           <label htmlFor="input-enabled" className="label-checkbox">Accept Terms and Conditions</label>
           <p>{errors.enabled}</p>
