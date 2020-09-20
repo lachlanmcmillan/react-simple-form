@@ -48,6 +48,10 @@ button {
   margin-bottom: 1px;
 }
 
+.form-control input[type="checkbox"] {
+  width: 20px;
+}
+
 .form-control .input-error {
   border: 1px solid lightcoral;
 }
@@ -55,4 +59,8 @@ button {
 .form-control p {
   font-size: 14px;
   color: lightcoral;
+}
+
+.label-checkbox {
+  display: inline;
 }

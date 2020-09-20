@@ -3,13 +3,18 @@ import React from 'react';
 /**
  * @return {{
  *   onSubmit: () => void, 
- *   register: () => void,
- *   inputs: { [name: string]: string) }
+ *   reset: () => void,
+ *   register: ({
+ *     name: string,
+ *     defaultValue: string  
+ *     validator?: (value: string) => string | undefined,
+ *   }) => void,
+ *   inputs: { [name: string]: string) },
  *   errors: { [name: string]: string) },
  *   touched: { [name: string]: string) }
  * }}
  */
- const useSimpleForm = () => {
+const useSimpleForm = () => {
   let validators = {};
   const [inputs, setInputs] = React.useState({});
   const [defaults, setDefaults] = React.useState({});
@@ -80,20 +85,20 @@ import React from 'react';
   }
 
   const onChange = evt => {
-    const { name, value } = evt.target;
-    setInput(name, value);
-    if (touched[name]) {
-      validate(name, value);
+    const { name, value, type } = evt.target;
+    if (type === 'checkbox') {
+      const newValue = evt.target.checked;
+      setInput(name, newValue);
+      validate(name, newValue);
+    } else {
+      setInput(name, value);
+      if (touched[name]) {
+        validate(name, value);
+      }
     }
   }
 
-  /**
-   * @param {{
-   *  name: string,
-   *  defaultValue: string  
-   *  validator?: (value: string) => string | undefined,
-   * }} params
-   */
+ 
   const register = ({ name, validator, defaultValue }) => {
     validators = { ...validators, [name]: validator };
     if (!(name in inputs) && typeof defaultValue !== 'undefined') { 

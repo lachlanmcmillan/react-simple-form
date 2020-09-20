@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React  from 'react'
 import ReactDOM from 'react-dom'
 import useSimpleForm from '../src/useSimpleForm';
 import css from './App.css';
@@ -59,6 +59,25 @@ function App() {
             className={errors.posint && 'input-error'}
           />
           <p>{errors.posint}</p>
+        </div>
+
+        <div className="form-control">
+          <input
+            {...register({
+              name: "enabled",
+              defaultValue: false,
+              validator: val =>
+                val === true
+                ? undefined
+                : "You must accept the terms and conditions to proceed"
+            })}
+            id="input-enabled"
+            type="checkbox"
+            checked={inputs.enabled === true}
+            // className={errors.posint && 'input-error'}
+          />
+          <label htmlFor="input-enabled" className="label-checkbox">Accept Terms and Conditions</label>
+          <p>{errors.enabled}</p>
         </div>
 
         <div className="button-group">
